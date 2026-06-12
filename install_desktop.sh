@@ -5,6 +5,8 @@ description="Install desktop environment on debian sid"
 
 set -e
 
+scriptpath="$(dirname "$(realpath "$0")")"
+
 usage() {
     errcode="$1"
 
@@ -18,14 +20,48 @@ usage() {
     echo
 }
 
+renew_sources() {
+    rm -f /etc/apt/sources.list
+
+    echo "Types: deb
+URIs: http://deb.debian.org/debian
+Suites: sid
+Components: main contrib non-free non-free-firmware
+Architectures: amd64 i386
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg" \
+        > /etc/apt/sources.list.d/sid.sources
+}
+
 install_desktop() {
-    if [[ $1 ]]; then
-        apt update -y
-        apt install -y task-desktop task-"$1"-desktop firefox
-        (dpkg -l | grep -q " firefox ") || 
-            (apt install -y firefox && apt purge -y firefox-esr)
-        apt autoremove --purge -y
+    local my_de = $1
+
+    renew_sources
+    apt update -y
+    apt install -y \
+        task-desktop task-"$my_de"-desktop firefox needrestart apt-listbugs
+    (dpkg -l | grep -q " firefox-esr") && apt purge -y firefox-esr
+    apt autoremove --purge -y
+}
+
+set_config() {
+    local user="$1"
+
+    if ! (groups "${user}" | grep -q sudo); then
+        gosudo_title="Privileges elevation"
+        gosudo_text="Add user '$user' to 'sudo' group ?"
+        if (whiptail --title "$gosudo_title" --yesno "$gosudo_text" 8 78); then
+            adduser $user sudo
+        fi
     fi
+
+    rm -f /home/$user/.{profile,bashrc,vimrc}
+    cp -f $scriptpath/dotfiles/profile /home/$user/.profile
+    mkdir -p /home/$user/.vim
+    cp -f $scriptpath/dotfiles/vimrc /home/$user/.vim/
+    mkdir -p /home/$user/.config/bash
+    cp -f $scriptpath/dotfiles/config/bash/* /home/$user/.config/bash/
+
+    chown -R $user:$user /home/$user
 }
 
 gen_checklist() {
@@ -78,4 +114,9 @@ my_desktop=($(whiptail --separate-output --radiolist "Desktop Environment" \
 install_desktop "$my_desktop"
 
 ./deploy_systools.sh
+
+for home_folder in /home/*; do
+    user="$(basename "$home_folder")"
+    (grep -q "^$user:" /etc/password) && set_config "$user"
+done
 
