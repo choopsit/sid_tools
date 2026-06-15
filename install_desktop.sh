@@ -20,48 +20,67 @@ usage() {
     echo
 }
 
-renew_sources() {
-    rm -f /etc/apt/sources.list
-
-    echo "Types: deb
-URIs: http://deb.debian.org/debian
-Suites: sid
-Components: main contrib non-free non-free-firmware
-Architectures: amd64 i386
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg" \
-        > /etc/apt/sources.list.d/sid.sources
-}
-
 install_desktop() {
-    local my_de = $1
+    local my_de="$1"
 
-    renew_sources
+    rm -f /etc/apt/sources.list
+    cp -f "$scriptpath"/apt/sid.sources /etc/apt/sources.list.d/
+    dpkg --add-architecture i386
+
     apt update -y
+    apt upgrade -y
+
     apt install -y \
-        task-desktop task-"$my_de"-desktop firefox needrestart apt-listbugs
-    (dpkg -l | grep -q " firefox-esr") && apt purge -y firefox-esr
+        linux-headers-amd64 build-essential \
+        needrestart apt-listbugs \
+        vim git curl rsync tree nfs-common \
+        task-desktop task-"$my_de"-desktop \
+        papirus-icon-theme breeze-cursor-theme libreoffice-style-sifr \
+        firefox gimp steam-installer \
+        ttf-mscorefonts-installer
+
+    if [[ $my_de == "xfce" ]]; then
+        apt install -y \
+            arc-theme greybird-gtk-theme slick-greeter \
+            redshift-gtk plank
+
+        apt purge xterm
+    fi
+
+    (dpkg -l | grep -q "firefox-esr") && apt purge -y firefox-esr
+
     apt autoremove --purge -y
 }
 
 set_config() {
     local user="$1"
 
-    if ! (groups "${user}" | grep -q sudo); then
-        gosudo_title="Privileges elevation"
-        gosudo_text="Add user '$user' to 'sudo' group ?"
-        if (whiptail --title "$gosudo_title" --yesno "$gosudo_text" 8 78); then
-            adduser $user sudo
+    if ! (groups "$user" | grep -q sudo); then
+        gosudo="Add user '$user' to 'sudo' group ?"
+        if (whiptail --yesno "$gosudo" 8 78); then
+            adduser "$user" sudo
         fi
     fi
 
-    rm -f /home/$user/.{profile,bashrc,vimrc}
-    cp -f $scriptpath/dotfiles/profile /home/$user/.profile
-    mkdir -p /home/$user/.vim
-    cp -f $scriptpath/dotfiles/vimrc /home/$user/.vim/
-    mkdir -p /home/$user/.config/bash
-    cp -f $scriptpath/dotfiles/config/bash/* /home/$user/.config/bash/
+    for dotfile in "profile" "bashrc" "vimrc"; do
+        rm -f /home/"$user/.$dotfile"
+    done
 
-    chown -R $user:$user /home/$user
+    cp -f "$scriptpath"/dotfiles/profile /home/"$user"/.profile
+
+    mkdir -p /home/"$user"/.config/bash
+    cp -f "$scriptpath"/dotfiles/config/bash/* /home/"$user"/.config/bash/
+
+    mkdir -p /home/"$user"/.vim
+    cp -f "$scriptpath"/dotfiles/vim/vimrc /home/"$user"/.vim/
+
+    chown -R "$user":"$user" /home/"$user"
+
+    vimplug_url="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    vimplug_dest="/home/$user/.vim/autoload/plug.vim"
+    su "$user" -c "mkdir -p $(dirname "$vimplug_dest")"
+    su "$user" -c "curl -fLo $vimplug_dest --create-dirs $vimplug_url"
+    su "$user" -c "vim +PlugInstall +qall"
 }
 
 gen_checklist() {
@@ -113,10 +132,16 @@ my_desktop=($(whiptail --separate-output --radiolist "Desktop Environment" \
 
 install_desktop "$my_desktop"
 
-./deploy_systools.sh
+"$scriptpath"/deploy_systools.sh
 
 for home_folder in /home/*; do
-    user="$(basename "$home_folder")"
-    (grep -q "^$user:" /etc/password) && set_config "$user"
+    my_user="$(basename "$home_folder")"
+    (grep -q "^$my_user:" /etc/passwd) && set_config "$my_user"
 done
+
+if (whiptail --yesno "Reboot and enjoy ?" 8 78); then
+    reboot
+else
+    exit 0
+fi
 

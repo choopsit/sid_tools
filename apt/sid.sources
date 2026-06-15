@@ -1,0 +1,6 @@
+Types: deb
+URIs: http://deb.debian.org/debian
+Suites: sid
+Components: main contrib non-free non-free-firmware
+Architectures: amd64 i386
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
