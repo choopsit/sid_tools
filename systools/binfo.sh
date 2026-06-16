@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+description="Display minimal system informations"
+# author: Choops <choopsbd@gmail.com>
+
+set -e
+
 DEF="\e[0m"
 RED="\e[31m"
 GRN="\e[32m"
@@ -9,11 +14,30 @@ PUR="\e[35m"
 CYN="\e[36m"
 GRY="\e[37m"
 
+
+usage() {
+    errcode="$1"
+
+    [[ $errcode == 0 ]] && echo "$description"
+
+    echo "Usage:"
+    echo "  '$(basename "$0") [OPTION]' as root or using sudo"
+    echo "Options:"
+    echo -e "  -h,--help: Print this help\n"
+
+    exit "$errcode"
+}
+
+
+[[ $1 =~ ^-(h|-help)$ ]] && usage 0
+
+[[ $1 ]] && echo -e "${RED}ERR$DEF: Bad argument" && usage 1
+
 palette="\e[30m#\e[31m#\e[32m#\e[33m#\e[34m#\e[35m#\e[36m#\e[37m#"
 
 colors=("$RED" "$GRN" "$YLO" "$BLU" "$PUR" "$CYN" "$GRY")
 rand=$[$RANDOM % ${#colors[@]}]
-col_deb="${colors[${rand}]}"
+col_deb="${colors[$rand]}"
 
 col_usr="$GRN"
 [[ $USER = root ]] && col_usr="$RED"

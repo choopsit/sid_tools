@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
-
-description="reformat and colorize df output"
+description="Reformat and colorize df output"
 # author: Choops <choopsbd@gmail.com>
 
+set -e
+
 DEF="\e[0m"
-BLK="\e[30m"
 RED="\e[31m"
 GRN="\e[32m"
 YLO="\e[33m"
@@ -15,21 +14,16 @@ PUR="\e[35m"
 CYN="\e[36m"
 GRY="\e[37m"
 
-ERR="${RED}ERR$DEF:"
-OK="${GRN}OK$DEF:"
-WRN="${YLO}WRN$DEF:"
-NFO="${CYN}NFO$DEF:"
 
 usage() {
     errcode="$1"
 
-    [[ ${errcode} == 0 ]] && echo -e "$CYN$description$DEF"
+    [[ $errcode == 0 ]] && echo "$description"
 
-    echo -e "${CYN}Usage$DEF:"
-    echo -e "  '$(basename "$0") [OPTION]' as root or using sudo"
-    echo -e "${CYN}Options$DEF:"
-    echo -e "  -h,--help: Print this help"
-    echo
+    echo "Usage:"
+    echo "  '$(basename "$0") [OPTION]' as root or using sudo"
+    echo "Options:"
+    echo -e "  -h,--help: Print this help\n"
 
     exit "$errcode"
 }
@@ -37,8 +31,7 @@ usage() {
 
 [[ $1 =~ ^-(h|-help)$ ]] && usage 0
 
-[[ $1 ]] && echo -e "ERR: Bad argument" && usage 1
-
+[[ $1 ]] && echo -e "${RED}ERR$DEF: Bad argument" && usage 1
 
 echo -e "${CYN}Filesystems$DEF:"
 while read line; do
@@ -118,3 +111,4 @@ while read line; do
 done < <(df -hT | grep -v 'tmpfs\|^Filesystem\|^Sys\|efivarfs')
 
 echo
+

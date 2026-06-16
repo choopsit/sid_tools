@@ -5,6 +5,10 @@ description="Install desktop environment on debian sid"
 
 set -e
 
+DEF="\e[0m"
+RED="\e[31m"
+CYN="\e[36m"
+
 scriptpath="$(dirname "$(realpath "$0")")"
 
 usage() {
@@ -23,13 +27,16 @@ usage() {
 install_desktop() {
     local my_de="$1"
 
+    echo -e "${CYN}Sources update$DEF:"
     rm -f /etc/apt/sources.list
     cp -f "$scriptpath"/apt/sid.sources /etc/apt/sources.list.d/
     dpkg --add-architecture i386
 
+    echo -e "\n${CYN}System upgrade$DEF:"
     apt update -y
     apt upgrade -y
 
+    echo -e "\n${CYN}Desktop environment installation$DEF:"
     apt install -y \
         linux-headers-amd64 build-essential \
         needrestart apt-listbugs \
@@ -49,6 +56,7 @@ install_desktop() {
 
     (dpkg -l | grep -q "firefox-esr") && apt purge -y firefox-esr
 
+    echo -e "${CYN}System cleanup$DEF:"
     apt autoremove --purge -y
 }
 
@@ -62,6 +70,7 @@ set_config() {
         fi
     fi
 
+    echo -e "${CYN}'$user' profile configuration$DEF:"
     for dotfile in "profile" "bashrc" "vimrc"; do
         rm -f /home/"$user/.$dotfile"
     done
@@ -99,21 +108,21 @@ gen_checklist() {
     done
 }
 
-[[ $2 ]] && echo "ERR: Too many arguments" && usage 1
+[[ $2 ]] && echo -e "${RED}ERR$DEF: Too many arguments" && usage 1
 
 if [[ $1 =~ ^-(h|-help)$ ]]; then
     usage 0
 elif [[ $1 ]]; then
-    echo "ERR: Bad argument" && usage 1
+    echo -e "${RED}ERR$DEF: Bad argument" && usage 1
 fi
 
 if [[ $(whoami) != root ]]; then
-    echo "ERR: Need higher privileges"
+    echo -e "${RED}ERR$DEF: Need higher privileges"
     exit 1
 fi
 
 if ! (grep -q "sid" /etc/os-release); then
-    echo "ERR: $(basename "$0") works only on Debian Sid"
+    echo -e "${RED}ERR$DEF: $(basename "$0") works only on Debian Sid"
     exit 1
 fi
 

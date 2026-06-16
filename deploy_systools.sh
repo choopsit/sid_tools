@@ -5,6 +5,11 @@ description="Deploy 'systools' scripts to /usr/local/bin"
 
 set -e
 
+DEF="\e[0m"
+RED="\e[31m"
+GRN="\e[32m"
+CYN="\e[36m"
+
 usage() {
     errcode="$1"
 
@@ -12,8 +17,7 @@ usage() {
     echo "Usage:"
     echo "  '$(realpath "$0") [OPTION]' as root or using 'sudo'"
     echo "Options:"
-    echo "  -h,--help: Print this help"
-    echo
+    echo -e "  -h,--help: Print this help\n"
 
     exit "$errcode"
 }
@@ -21,10 +25,10 @@ usage() {
 push_script() {
     script="$1"
     script_name="$(basename "$script")"
-    if (cp -f "$script" /usr/local/bin/"${script_name%.*}"); then
-        echo "DONE: '$script' pushed as '/usr/local/bin/${script_name%.*}'"
+    if (cp -f "$script" "/usr/local/bin/${script_name%.*}"); then
+        echo -e "${GRN}DONE$DEF: '$script_name' pushed as '/usr/local/bin/${script_name%.*}'"
     else
-        echo "ERR: Failed to push '$script_name'"
+        echo -e "${RED}ERR$DEF: Failed to push '$script_name'"
     fi
 }
 
@@ -32,16 +36,16 @@ push_script() {
 if [[ $1 =~ ^-(h|-help)$ ]]; then
     usage 0
 elif [[ $1 ]]; then
-    echo "ERR: Bad argument" && usage 1
+    echo -e "${RED}ERR$DEF: Bad argument" && usage 1
 fi
 
-[[ $(whoami) != root ]] && echo "ERR: Need higher privileges" && usage 1
+[[ $(whoami) != root ]] && echo "${RED}ERR$DEF: Need higher privileges" && usage 1
 
 script_path="$(dirname "$(realpath "$0")")"
 
-echo "Deploying bash and python systools to '/usr/local/bin/'..."
+echo -e "${CYN}Deploying bash and python systools to '/usr/local/bin/'$DEF..."
 
-for systool in "$script_path"/systools/*; do
+for systool in "$script_path/systools"/*; do
     push_script "$systool"
 done
 
