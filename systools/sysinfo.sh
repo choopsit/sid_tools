@@ -3,7 +3,7 @@
 description="Get essential system info and optionally proceed a system upgrade"
 # author: Choops <choopsbd@gmail.com>
 
-set -e
+#set -e
 
 DEF="\e[0m"
 RED="\e[31m"

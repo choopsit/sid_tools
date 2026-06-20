@@ -24,12 +24,69 @@ usage() {
     echo
 }
 
+gen_checklist() {
+    checklist=()
+
+    for choice in $@; do
+        if [[ $choice == "xfce" ]]; then
+            checklist+=("$choice" "|" "ON")
+        else
+            checklist+=("$choice" "|" "OFF")
+        fi
+    done
+
+    for elt in ${checklist[@]}; do
+        echo "$elt"
+    done
+}
+
+set_config() {
+    local user="$1"
+    local my_de="$2"
+
+    if ! (groups "$user" | grep -q sudo); then
+        gosudo="Add user '$user' to 'sudo' group ?"
+        if (whiptail --yesno "$gosudo" 8 78); then
+            adduser "$user" sudo
+        fi
+    fi
+
+    echo -e "${CYN}'$user' profile configuration$DEF:"
+
+    for dotfile in "profile" "bashrc" "vimrc"; do
+        rm -f "/home/$user/.$dotfile"
+    done
+
+    cp -f "$scriptpath/dotfiles/profile" "/home/$user/.profile"
+
+    mkdir -p "/home/$user/.config/bash"
+    cp -f "$scriptpath/dotfiles/config/bash"/* "/home/$user/.config/bash"/
+
+    if [[ $my_de == "xfce" ]]; then
+        my_confs=("xfce4" "Thunar" "plank")
+        for my_conf in ${myconfs[@]}; do
+            mkdir -p "/home/$user/.config/$my_conf"
+            cp -rf "$scriptpath/dotfiles/config/$my_conf"/* "/home/$user/.config/$my_conf"/
+        done
+    fi
+
+    mkdir -p "/home/$user/.vim"
+    cp -f "$scriptpath/dotfiles/vim/vimrc" "/home/$user/.vim"/
+
+    chown -R "$user":"$user" "/home/$user"
+
+    vimplug_url="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    vimplug_dest="/home/$user/.vim/autoload/plug.vim"
+    su "$user" -c "mkdir -p $(dirname "$vimplug_dest")"
+    su "$user" -c "curl -fLo $vimplug_dest --create-dirs $vimplug_url"
+    su "$user" -c "vim +PlugInstall +qall"
+}
+
 install_desktop() {
     local my_de="$1"
 
-    echo -e "${CYN}Sources update$DEF:"
     rm -f /etc/apt/sources.list
-    cp -f "$scriptpath"/apt/sid.sources /etc/apt/sources.list.d/
+    cp -f "$scriptpath/conf/apt/sid.sources" /etc/apt/sources.list.d/
     dpkg --add-architecture i386
 
     echo -e "\n${CYN}System upgrade$DEF:"
@@ -48,63 +105,24 @@ install_desktop() {
 
     if [[ $my_de == "xfce" ]]; then
         apt install -y \
-            arc-theme greybird-gtk-theme slick-greeter \
-            redshift-gtk plank
+            arc-theme slick-greeter \
+            redshift-gtk plank clapper
 
-        apt purge xterm
+        apt purge xterm vim-tiny parole
+
+        cp -f "$scriptpath/conf/lightdm/10_my.conf" /usr/share/lightdm/lightdm.conf.d/
     fi
 
     (dpkg -l | grep -q "firefox-esr") && apt purge -y firefox-esr
 
     echo -e "${CYN}System cleanup$DEF:"
     apt autoremove --purge -y
-}
 
-set_config() {
-    local user="$1"
+    "$scriptpath"/deploy_systools.sh
 
-    if ! (groups "$user" | grep -q sudo); then
-        gosudo="Add user '$user' to 'sudo' group ?"
-        if (whiptail --yesno "$gosudo" 8 78); then
-            adduser "$user" sudo
-        fi
-    fi
-
-    echo -e "${CYN}'$user' profile configuration$DEF:"
-    for dotfile in "profile" "bashrc" "vimrc"; do
-        rm -f /home/"$user/.$dotfile"
-    done
-
-    cp -f "$scriptpath"/dotfiles/profile /home/"$user"/.profile
-
-    mkdir -p /home/"$user"/.config/bash
-    cp -f "$scriptpath"/dotfiles/config/bash/* /home/"$user"/.config/bash/
-
-    mkdir -p /home/"$user"/.vim
-    cp -f "$scriptpath"/dotfiles/vim/vimrc /home/"$user"/.vim/
-
-    chown -R "$user":"$user" /home/"$user"
-
-    vimplug_url="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-    vimplug_dest="/home/$user/.vim/autoload/plug.vim"
-    su "$user" -c "mkdir -p $(dirname "$vimplug_dest")"
-    su "$user" -c "curl -fLo $vimplug_dest --create-dirs $vimplug_url"
-    su "$user" -c "vim +PlugInstall +qall"
-}
-
-gen_checklist() {
-    checklist=()
-
-    for choice in $@; do
-        if [[ $choice == "xfce" ]]; then
-            checklist+=("$choice" "|" "ON")
-        else
-            checklist+=("$choice" "|" "OFF")
-        fi
-    done
-
-    for elt in ${checklist[@]}; do
-        echo "$elt"
+    for home_folder in /home/*; do
+        my_user="$(basename "$home_folder")"
+        (grep -q "^$my_user:" /etc/passwd) && set_config "$my_user" "$my_desktop"
     done
 }
 
@@ -140,13 +158,6 @@ my_desktop=($(whiptail --separate-output --radiolist "Desktop Environment" \
         ${desktop_checklist[@]} 3>&1 1>&2 2>&3))
 
 install_desktop "$my_desktop"
-
-"$scriptpath"/deploy_systools.sh
-
-for home_folder in /home/*; do
-    my_user="$(basename "$home_folder")"
-    (grep -q "^$my_user:" /etc/passwd) && set_config "$my_user"
-done
 
 if (whiptail --yesno "Reboot and enjoy ?" 8 78); then
     reboot
