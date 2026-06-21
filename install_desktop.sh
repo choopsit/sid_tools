@@ -63,8 +63,8 @@ set_config() {
     cp -f "$scriptpath/dotfiles/config/bash"/* "/home/$user/.config/bash"/
 
     if [[ $my_de == "xfce" ]]; then
-        my_confs=("xfce4" "Thunar" "plank")
-        for my_conf in ${myconfs[@]}; do
+        my_confs=("xfce4" "Thunar" "plank" "terminator" "autostart" "dconf" "gtk-3.0")
+        for my_conf in ${my_confs[@]}; do
             mkdir -p "/home/$user/.config/$my_conf"
             cp -rf "$scriptpath/dotfiles/config/$my_conf"/* "/home/$user/.config/$my_conf"/
         done
@@ -105,10 +105,11 @@ install_desktop() {
 
     if [[ $my_de == "xfce" ]]; then
         apt install -y \
+            gvfs-backends \
             arc-theme slick-greeter \
-            redshift-gtk plank clapper
+            redshift-gtk plank clapper terminator
 
-        apt purge xterm vim-tiny parole
+        apt purge -y xterm vim-tiny parole
 
         cp -f "$scriptpath/conf/lightdm/10_my.conf" /usr/share/lightdm/lightdm.conf.d/
     fi

@@ -120,6 +120,8 @@
       <property name="position-commands-alternate" type="bool" value="false"/>
       <property name="hover-switch-category" type="bool" value="true"/>
       <property name="recent" type="array">
+        <value type="string" value="xfce4-terminal.desktop"/>
+        <value type="string" value="terminator.desktop"/>
         <value type="string" value="plank.desktop"/>
       </property>
     </property>
