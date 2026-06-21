@@ -42,10 +42,13 @@ col_deb="${colors[$rand]}"
 col_usr="$GRN"
 [[ $USER = root ]] && col_usr="$RED"
 
-my_os="$(awk -F\" '/^PRETTY/ {print $2}' /etc/os-release)"
+my_id="$col_usr$USER$DEF@$YLO$(hostname -s)$DEF"
+my_os="${CYN}OS$DEF: $(awk -F\" '/^PRETTY/ {print $2}' /etc/os-release)"
+my_kernel="${CYN}Kernel$DEF: $(uname -sr)"
 
-my_shell="$(basename "$SHELL")"
-if [[ $my_shell == bash ]]; then
+myshell="$(basename "$SHELL")"
+my_shell="${CYN}Shell$DEF: $myshell"
+if [[ $myshell == bash ]]; then
     my_shell+=" ${BASH_VERSION%(*}"
 else
     shell_version="$("$SHELL" --version 2>&1)"
@@ -57,14 +60,50 @@ else
     my_shell+=" $shell_version"
 fi
 
+my_terminal=""
+if [[ -f /etc/alternatives/x-terminal-emulator ]]; then
+    sept="\t\t\t"
+    if [[ ${#my_shell} -lt 7 ]]; then
+        sept="\t\t\t\t"
+    elif [[ ${#my_shell} -gt 14 ]];then
+        sept="\t\t"
+    fi
+    if (grep -q terminator /etc/alternatives/x-terminal-emulator); then
+        term="terminator"
+    else
+        term="$(awk -F"'" '/exec/ {print $2}' /etc/alternatives/x-terminal-emulator)"
+    fi
+    term+="$(dpkg-query -W "$term" | awk '{print $2}')"
+    my_terminal="$sept${CYN}Terminal$DEF: $term"
+fi
+
+my_packages="${CYN}Packages$DEF: $(dpkg -l | grep '^ii' | wc -l)"
+
+mydesktop=""
+if { [[ $XDG_CURRENT_DESKTOP ]] || [[ $DESKTOP_SESSION ]] ; }; then
+    if [[ $XDG_CURRENT_DESKTOP ]]; then
+        if [[ $XDG_CURRENT_DESKTOP == XFCE ]]; then
+            de="$DESKTOP_SESSION $(dpkg-query -W xfce4 | awk '{print $2}')"
+        else
+            de="$XDG_CURRENT_DESKTOP"
+        fi
+    else
+            de="$DESKTOP_SESSION"
+        fi
+    my_desktop="\t\t${CYN}DE$DEF: $de"
+fi
+
 my_ram="$(free -m | awk '/^Mem:/ {print $3 "/" $2 "MB"}')"
 my_swap="$(free -m | awk '/^Swap:/ {print $3 "/" $2 "MB"}')"
+my_memory="${CYN}RAM$DEF: $my_ram\t\t${CYN}Swap$DEF: $my_swap"
 
-echo -e "$col_deb   .a#\$\$#a.   $col_usr$USER$DEF@$YLO$(hostname -s)$DEF"
-echo -e "$col_deb  d#\"    \"#b  ${CYN}OS$DEF: $my_os"
-echo -e "$col_deb  ##  d\"  ##  ${CYN}kernel$DEF: $(uname -sr)"
-echo -e "$col_deb  \"#. \"#\$#\"   ${CYN}shell$DEF: $my_shell"
-echo -e "$col_deb   \"#.        ${CYN}packages$DEF: $(dpkg -l | grep '^ii' | wc -l)"
-echo -e "$col_deb     \"+.      ${CYN}uptime$DEF: $(uptime -p | sed 's/up //')"
-echo -e "   $palette   ${CYN}RAM$DEF: $my_ram\t${CYN}swap$DEF: $my_swap\n"
+my_uptime="${CYN}Uptime$DEF: $(uptime -p | sed 's/up //')"
+
+echo -e "$col_deb   .a#\$\$#a.   $my_id"
+echo -e "$col_deb  d#\"    \"#b  $my_os"
+echo -e "$col_deb  ##  d\"  ##  $my_kernel"
+echo -e "$col_deb  \"#. \"#\$#\"   $my_shell$my_terminal"
+echo -e "$col_deb   \"#.        $my_packages$my_desktop"
+echo -e "$col_deb     \"+.      $my_memory"
+echo -e "   $palette   $my_uptime\n"
 
