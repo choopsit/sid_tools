@@ -40,18 +40,24 @@ gen_checklist() {
     done
 }
 
-set_config() {
-    local user="$1"
-    local my_de="$2"
+specific_config() {
+    local my_de="$1"
+    local user="$2"
 
-    if ! (groups "$user" | grep -q sudo); then
-        gosudo="Add user '$user' to 'sudo' group ?"
-        if (whiptail --yesno "$gosudo" 8 78); then
-            adduser "$user" sudo
-        fi
+    if [[ $my_de == "xfce" ]]; then
+        my_confs=("xfce4" "Thunar" "plank" "terminator" "autostart" "dconf" "gtk-3.0")
+        for my_conf in ${my_confs[@]}; do
+            mkdir -p "/home/$user/.config/$my_conf"
+            cp -rf "$scriptpath/dotfiles/config/$my_conf"/* "/home/$user/.config/$my_conf"/
+        done
     fi
+}
 
-    echo -e "${CYN}'$user' profile configuration$DEF:"
+apply_config() {
+    local my_de="$1"
+    local user="$2"
+
+    echo -e "${CYN}$user's profile configuration$DEF:"
 
     for dotfile in "profile" "bashrc" "vimrc"; do
         rm -f "/home/$user/.$dotfile"
@@ -62,13 +68,7 @@ set_config() {
     mkdir -p "/home/$user/.config/bash"
     cp -f "$scriptpath/dotfiles/config/bash"/* "/home/$user/.config/bash"/
 
-    if [[ $my_de == "xfce" ]]; then
-        my_confs=("xfce4" "Thunar" "plank" "terminator" "autostart" "dconf" "gtk-3.0")
-        for my_conf in ${my_confs[@]}; do
-            mkdir -p "/home/$user/.config/$my_conf"
-            cp -rf "$scriptpath/dotfiles/config/$my_conf"/* "/home/$user/.config/$my_conf"/
-        done
-    fi
+    specific_config "$my_de" "$user"
 
     mkdir -p "/home/$user/.vim"
     cp -f "$scriptpath/dotfiles/vim/vimrc" "/home/$user/.vim"/
@@ -82,9 +82,42 @@ set_config() {
     su "$user" -c "vim +PlugInstall +qall"
 }
 
+set_config() {
+    local my_de="$1"
+    local user="$2"
+
+    if ! (groups "$user" | grep -q sudo); then
+        gosudo="Add user '$user' to 'sudo' group ?"
+        if (whiptail --yesno "$gosudo" 8 78); then
+            adduser "$user" sudo
+        fi
+    fi
+
+    applyprofile="Apply default $my_de config to $user's profile ?"
+    if (whiptail --yesno "$applyprofike" 8 78); then
+        apply_config "$my_de" "$user"
+    fi
+}
+
+specific_packages(){
+    local my_de="$1"
+
+    echo -e "\n${CYN}Desktop environment adaptation (adding/replacing apps)$DEF:"
+    if [[ $my_de == "xfce" ]]; then
+        apt install -y \
+            slick-greeter gvfs-backends redshift-gtk plank arc-theme \
+            terminator galculator clapper
+
+        apt purge -y xterm vim-tiny parole* atril* xsane*
+
+        cp -f "$scriptpath/conf/lightdm/10_my.conf" /usr/share/lightdm/lightdm.conf.d/
+    fi
+}
+
 install_desktop() {
     local my_de="$1"
 
+    # prepare sources: add contrib non-free repos and add i386 architecture
     rm -f /etc/apt/sources.list
     cp -f "$scriptpath/conf/apt/sid.sources" /etc/apt/sources.list.d/
     dpkg --add-architecture i386
@@ -95,24 +128,15 @@ install_desktop() {
 
     echo -e "\n${CYN}Desktop environment installation$DEF:"
     apt install -y \
-        linux-headers-amd64 build-essential \
+        linux-headers-amd64 build-essential nfs-common \
         needrestart apt-listbugs \
-        vim git curl rsync tree nfs-common \
+        vim git curl rsync 7zip htop tree \
         task-desktop task-"$my_de"-desktop \
         papirus-icon-theme breeze-cursor-theme libreoffice-style-sifr \
-        firefox gimp steam-installer \
+        firefox gimp steam-installer virt-viewer \
         ttf-mscorefonts-installer
 
-    if [[ $my_de == "xfce" ]]; then
-        apt install -y \
-            gvfs-backends \
-            arc-theme slick-greeter \
-            redshift-gtk plank clapper terminator
-
-        apt purge -y xterm vim-tiny parole
-
-        cp -f "$scriptpath/conf/lightdm/10_my.conf" /usr/share/lightdm/lightdm.conf.d/
-    fi
+    specific_packages "$my_de"
 
     (dpkg -l | grep -q "firefox-esr") && apt purge -y firefox-esr
 
@@ -123,7 +147,7 @@ install_desktop() {
 
     for home_folder in /home/*; do
         my_user="$(basename "$home_folder")"
-        (grep -q "^$my_user:" /etc/passwd) && set_config "$my_user" "$my_desktop"
+        (grep -q "^$my_user:" /etc/passwd) && set_config "$my_desktop" "$my_user"
     done
 }
 
