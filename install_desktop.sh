@@ -87,14 +87,14 @@ set_config() {
     local user="$2"
 
     if ! (groups "$user" | grep -q sudo); then
-        gosudo="Add user '$user' to 'sudo' group ?"
-        if (whiptail --yesno "$gosudo" 8 78); then
+        go_sudo="Add user '$user' to 'sudo' group ?"
+        if (whiptail --yesno "$go_sudo" 8 78); then
             adduser "$user" sudo
         fi
     fi
 
-    applyprofile="Apply default $my_de config to $user's profile ?"
-    if (whiptail --yesno "$applyprofike" 8 78); then
+    apply_profile="Apply default $my_de config to $user's profile ?"
+    if (whiptail --yesno "$apply_profile" 8 78); then
         apply_config "$my_de" "$user"
     fi
 }
