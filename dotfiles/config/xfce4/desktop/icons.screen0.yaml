@@ -25,3 +25,7 @@ configs:
     "/home/choops":
       row: 0
       col: 0
+    "sftp://mrchat/":
+      row: 0
+      col: 0
+      last_seen: 1782421860277542

@@ -117,8 +117,8 @@ redshift_config() {
 
 add_themes_tweaks() {
     wget -qO- https://git.io/papirus-folders-install | sh
-    #papirus-folders -t Papirus-Dark -C yaru
-    #colloid_gtk
+    papirus-folders -t Papirus-Dark -C yaru
+    /usr/local/bin/colloid_gtk
     #gruvbox_icons
 }
 
@@ -162,7 +162,6 @@ install_desktop() {
         ttf-mscorefonts-installer
 
     specific_packages "$my_de"
-    add_themes_tweaks
 
     (dpkg -l | grep -q "firefox-esr") && apt purge -y firefox-esr
 
@@ -170,6 +169,7 @@ install_desktop() {
     apt autoremove --purge -y
 
     "$scriptpath"/deploy_systools.sh
+    add_themes_tweaks
 
     for home_folder in /home/*; do
         my_user="$(basename "$home_folder")"
