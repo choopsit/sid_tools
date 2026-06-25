@@ -99,6 +99,29 @@ set_config() {
     fi
 }
 
+lightdm_config() {
+    cp -f "$scriptpath/conf/lightdm/10_my.conf" /usr/share/lightdm/lightdm.conf.d/
+}
+
+pulse_config() {
+    pulse_param="flat-volumes = no"
+    sed -e "s/; ${pulse_param}/${pulse_param}/" -i /etc/pulse/daemon.conf
+}
+
+redshift_config() {
+    redshift_conf="\n[redshift]\nallowed=true\nsystem=false\nusers="
+    if ! (grep -qvs redshift /etc/geoclue/geoclue.conf); then
+        echo -e "$redshift_conf" >> /etc/geoclue/geoclue.conf
+    fi
+}
+
+add_themes_tweaks() {
+    wget -qO- https://git.io/papirus-folders-install | sh
+    #papirus-folders -t Papirus-Dark -C yaru
+    #colloid_gtk
+    #gruvbox_icons
+}
+
 specific_packages(){
     local my_de="$1"
 
@@ -110,7 +133,9 @@ specific_packages(){
 
         apt purge -y xterm vim-tiny parole* atril* xsane*
 
-        cp -f "$scriptpath/conf/lightdm/10_my.conf" /usr/share/lightdm/lightdm.conf.d/
+        lightdm_config
+        pulse_config
+        redshift_config
     fi
 }
 
@@ -137,6 +162,7 @@ install_desktop() {
         ttf-mscorefonts-installer
 
     specific_packages "$my_de"
+    add_themes_tweaks
 
     (dpkg -l | grep -q "firefox-esr") && apt purge -y firefox-esr
 

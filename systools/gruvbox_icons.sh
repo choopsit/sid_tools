@@ -30,11 +30,11 @@ usage() {
 }
 
 bye_icon() {
-    [[ ! -d "$THEMES_DIR" ]] && echo -e "$icon_theme is not installed\n" && exit 0
+    [[ ! -d "$THEMES_DIR/$theme_name" ]] && echo -e "$icon_theme is not installed\n" && exit 0
 
     echo "Removing $icon_theme..."
 
-    sudo rm -rf "$THEMES_DIR/gruvbox"*
+    sudo rm -rf "$THEMES_DIR/$theme_name"
     rm -rf "$thm_gitpath"
     echo
     exit 0

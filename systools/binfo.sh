@@ -76,7 +76,7 @@ if [[ -f /etc/alternatives/x-terminal-emulator ]]; then
     else
         term="$(awk -F"'" '/exec/ {print $2}' /etc/alternatives/x-terminal-emulator)"
     fi
-    term+="$(dpkg-query -W "$term" | awk '{print $2}')"
+    term+=" $(dpkg-query -W "$term" | awk '{print $2}')"
     my_terminal="$sept${CYN}Terminal$DEF: $term"
 fi
 

@@ -31,10 +31,12 @@ usage() {
 if [[ $1 =~ ^-(h|-help)$ ]]; then
     usage 0
 elif [[ $1 =~ ^-(u|-update)$ ]]; then
-    if { [[ -f /usr/local/bin/colloid_gtk ]] || [[ -f /usr/local/bin/gruvbox_icons ]];} then
+    colloid_gtk_folder=/usr/share/themes/Colloid-Dark-Gruvbox
+    gruvbox_icons_folder=/usr/share/icons/Gruvbox-Plus-Dark
+    if { [[ -d "$colloid_gtk_folder" ]] || [[ -d "$gruvbox_icons_folder" ]];} then
         echo -e "${CYN}Themes upgrade$DEF:"
-        [[ -f /usr/local/bin/colloid_gtk ]] && colloid_gtk
-        [[ -f /usr/local/bin/gruvbox_icons ]] && gruvbox_icons
+        [[ -d "$colloid_gtk_folder" ]] && colloid_gtk
+        [[ -d "$gruvbox_icons_folder" ]] && gruvbox_icons
     fi
     echo -e "${CYN}Sources update$DEF:"
     sudo apt update
