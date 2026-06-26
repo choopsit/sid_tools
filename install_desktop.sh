@@ -129,7 +129,8 @@ specific_packages(){
     if [[ $my_de == "xfce" ]]; then
         apt install -y \
             slick-greeter gvfs-backends redshift-gtk plank arc-theme \
-            terminator galculator clapper
+            terminator galculator clapper soundconverter sound-juicer \
+            supertuxkart
 
         apt purge -y xterm vim-tiny parole* atril* xsane*
 
@@ -142,7 +143,7 @@ specific_packages(){
 install_desktop() {
     local my_de="$1"
 
-    # prepare sources: add contrib non-free repos and add i386 architecture
+    # Prepare sources: Add contrib non-free repos and add i386 architecture
     rm -f /etc/apt/sources.list
     cp -f "$scriptpath/conf/apt/sid.sources" /etc/apt/sources.list.d/
     dpkg --add-architecture i386
@@ -177,6 +178,7 @@ install_desktop() {
     done
 }
 
+
 [[ $2 ]] && echo -e "${RED}ERR$DEF: Too many arguments" && usage 1
 
 if [[ $1 =~ ^-(h|-help)$ ]]; then
@@ -195,6 +197,7 @@ if ! (grep -q "sid" /etc/os-release); then
     exit 1
 fi
 
+# Choose desktop environment to install with user profile customization or not
 desktop_list=(
     "xfce"
     "gnome"
