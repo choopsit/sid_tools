@@ -143,10 +143,13 @@ specific_packages(){
 install_desktop() {
     local my_de="$1"
 
-    # Prepare sources: Add contrib non-free repos and add i386 architecture
+    echo -e "\n${CYN}Sources cleanup$DEF:"
     rm -f /etc/apt/sources.list
     cp -f "$scriptpath/conf/apt/sid.sources" /etc/apt/sources.list.d/
     dpkg --add-architecture i386
+
+    apt clean
+    apt autoclean
 
     echo -e "\n${CYN}System upgrade$DEF:"
     apt update -y
