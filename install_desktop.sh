@@ -148,8 +148,8 @@ install_desktop() {
     cp -f "$scriptpath/conf/apt/sid.sources" /etc/apt/sources.list.d/
     dpkg --add-architecture i386
 
-    apt clean
-    apt autoclean
+    apt clean -y
+    apt autoclean -y
 
     echo -e "\n${CYN}System upgrade$DEF:"
     apt update -y
