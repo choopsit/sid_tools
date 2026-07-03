@@ -115,11 +115,17 @@ redshift_config() {
     fi
 }
 
-add_themes_tweaks() {
+tweak_papirus() {
     wget -qO- https://git.io/papirus-folders-install | sh
     papirus-folders -t Papirus-Dark -C yaru
-    /usr/local/bin/colloid_gtk
-    #gruvbox_icons
+}
+
+add_themes_tweaks() {
+    if [[ $my_de == "xfce" ]]; then
+        tweak_papirus
+        /usr/local/bin/colloid_gtk
+        #/usr/local/bin/gruvbox_icons
+    fi
 }
 
 specific_packages(){
@@ -128,7 +134,8 @@ specific_packages(){
     echo -e "\n${CYN}Desktop environment adaptation (adding/replacing apps)$DEF:"
     if [[ $my_de == "xfce" ]]; then
         apt install -y \
-            slick-greeter gvfs-backends redshift-gtk plank arc-theme \
+            slick-greeter gvfs-backends redshift-gtk plank \
+            arc-theme papirus-icon-theme breeze-cursor-theme \
             terminator galculator clapper soundconverter sound-juicer \
             supertuxkart
 
@@ -145,7 +152,7 @@ install_desktop() {
 
     echo -e "\n${CYN}Sources cleanup$DEF:"
     rm -f /etc/apt/sources.list
-    cp -f "$scriptpath/conf/apt/sid.sources" /etc/apt/sources.list.d/
+    cp -f "$scriptpath/conf/apt/debian.sources" /etc/apt/sources.list.d/
     dpkg --add-architecture i386
 
     apt clean -y
@@ -161,9 +168,8 @@ install_desktop() {
         needrestart apt-listbugs \
         vim git curl rsync 7zip htop tree \
         task-desktop task-"$my_de"-desktop \
-        papirus-icon-theme breeze-cursor-theme libreoffice-style-sifr \
-        firefox gimp steam-installer virt-viewer \
-        ttf-mscorefonts-installer
+        libreoffice-style-sifr ttf-mscorefonts-installer \
+        firefox gimp steam-installer virt-viewer
 
     specific_packages "$my_de"
 
@@ -204,7 +210,6 @@ fi
 desktop_list=(
     "xfce"
     "gnome"
-    "cinnamon"
     "kde"
 )
 
