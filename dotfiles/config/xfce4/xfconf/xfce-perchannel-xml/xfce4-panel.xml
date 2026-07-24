@@ -6,6 +6,7 @@
     <value type="int" value="1"/>
     <value type="int" value="2"/>
     <value type="int" value="3"/>
+    <value type="int" value="4"/>
     <property name="dark-mode" type="bool" value="true"/>
     <property name="panel-1" type="empty">
       <property name="position" type="string" value="p=6;x=0;y=0"/>
@@ -66,6 +67,25 @@
         <value type="double" value="0"/>
       </property>
     </property>
+    <property name="panel-4" type="empty">
+      <property name="position" type="string" value="p=10;x=957;y=1036"/>
+      <property name="size" type="uint" value="96"/>
+      <property name="length" type="double" value="3.125"/>
+      <property name="position-locked" type="bool" value="true"/>
+      <property name="background-style" type="uint" value="1"/>
+      <property name="background-rgba" type="array">
+        <value type="double" value="0.14000000000000001"/>
+        <value type="double" value="0.13760402684563761"/>
+        <value type="double" value="0.11900000000000002"/>
+        <value type="double" value="0.38590604026845637"/>
+      </property>
+      <property name="autohide-behavior" type="uint" value="1"/>
+      <property name="plugin-ids" type="array">
+        <value type="int" value="2"/>
+      </property>
+      <property name="border-width" type="uint" value="0"/>
+      <property name="nrows" type="uint" value="1"/>
+    </property>
   </property>
   <property name="plugins" type="empty">
     <property name="plugin-4" type="string" value="pager"/>
@@ -113,10 +133,10 @@
     <property name="plugin-1" type="string" value="whiskermenu">
       <property name="view-mode" type="int" value="0"/>
       <property name="category-show-name" type="bool" value="false"/>
-      <property name="launcher-icon-size" type="int" value="3"/>
+      <property name="launcher-icon-size" type="int" value="4"/>
       <property name="category-icon-size" type="int" value="2"/>
-      <property name="menu-width" type="int" value="800"/>
-      <property name="menu-height" type="int" value="540"/>
+      <property name="menu-width" type="int" value="810"/>
+      <property name="menu-height" type="int" value="580"/>
       <property name="menu-opacity" type="int" value="85"/>
       <property name="position-categories-alternate" type="bool" value="true"/>
       <property name="position-profile-alternate" type="bool" value="true"/>
@@ -124,13 +144,14 @@
       <property name="position-commands-alternate" type="bool" value="false"/>
       <property name="hover-switch-category" type="bool" value="true"/>
       <property name="recent" type="array">
+        <value type="string" value="io.github.quodlibet.QuodLibet.desktop"/>
         <value type="string" value="xfce4-terminal.desktop"/>
         <value type="string" value="terminator.desktop"/>
-        <value type="string" value="plank.desktop"/>
       </property>
     </property>
     <property name="plugin-11" type="string" value="pulseaudio">
       <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
+      <property name="known-players" type="string" value="io.github.quodlibet.QuodLibet"/>
     </property>
     <property name="plugin-12" type="string" value="power-manager-plugin"/>
     <property name="plugin-13" type="string" value="weather">
@@ -173,5 +194,6 @@
     <property name="plugin-16" type="string" value="separator">
       <property name="style" type="uint" value="0"/>
     </property>
+    <property name="plugin-2" type="string" value="docklike"/>
   </property>
 </channel>

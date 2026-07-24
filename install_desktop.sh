@@ -45,7 +45,7 @@ specific_config() {
     local user="$2"
 
     if [[ $my_de == "xfce" ]]; then
-        my_confs=("xfce4" "Thunar" "plank" "terminator" "autostart" "dconf" "gtk-3.0")
+        my_confs=("xfce4" "Thunar" "terminator" "autostart" "dconf" "gtk-3.0")
         for my_conf in ${my_confs[@]}; do
             mkdir -p "/home/$user/.config/$my_conf"
             cp -rf "$scriptpath/dotfiles/config/$my_conf"/* "/home/$user/.config/$my_conf"/
@@ -134,7 +134,7 @@ specific_packages(){
     echo -e "\n${CYN}Desktop environment adaptation (adding/replacing apps)$DEF:"
     if [[ $my_de == "xfce" ]]; then
         apt install -y \
-            slick-greeter gvfs-backends redshift-gtk plank \
+            slick-greeter gvfs-backends redshift-gtk xfce4-docklike-plugin \
             arc-theme papirus-icon-theme breeze-cursor-theme \
             terminator galculator clapper soundconverter sound-juicer \
             supertuxkart

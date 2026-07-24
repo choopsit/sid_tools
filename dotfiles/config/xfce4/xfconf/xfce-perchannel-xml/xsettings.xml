@@ -32,7 +32,7 @@
     <property name="MenuBarAccel" type="empty"/>
     <property name="CursorThemeName" type="string" value="breeze_cursors"/>
     <property name="CursorThemeSize" type="int" value="36"/>
-    <property name="DecorationLayout" type="string" value="close,minimize,maximize:menu,icon"/>
+    <property name="DecorationLayout" type="string" value="close,minimize,maximize:"/>
     <property name="DialogsUseHeader" type="empty"/>
     <property name="TitlebarMiddleClick" type="empty"/>
   </property>
