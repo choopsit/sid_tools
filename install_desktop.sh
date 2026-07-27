@@ -11,6 +11,7 @@ CYN="\e[36m"
 
 scriptpath="$(dirname "$(realpath "$0")")"
 
+
 usage() {
     errcode="$1"
 
@@ -82,23 +83,6 @@ apply_config() {
     su "$user" -c "vim +PlugInstall +qall"
 }
 
-set_config() {
-    local my_de="$1"
-    local user="$2"
-
-    if ! (groups "$user" | grep -q sudo); then
-        go_sudo="Add user '$user' to 'sudo' group ?"
-        if (whiptail --yesno "$go_sudo" 8 78); then
-            adduser "$user" sudo
-        fi
-    fi
-
-    apply_profile="Apply default $my_de config to $user's profile ?"
-    if (whiptail --yesno "$apply_profile" 8 78); then
-        apply_config "$my_de" "$user"
-    fi
-}
-
 lightdm_config() {
     cp -f "$scriptpath/conf/lightdm/10_my.conf" /usr/share/lightdm/lightdm.conf.d/
 }
@@ -147,7 +131,7 @@ specific_packages(){
     fi
 }
 
-install_desktop() {
+install_desktop_environment() {
     local my_de="$1"
 
     echo -e "\n${CYN}Sources cleanup$DEF:"
@@ -164,8 +148,9 @@ install_desktop() {
 
     echo -e "\n${CYN}Desktop environment installation$DEF:"
     apt install -y \
-        linux-headers-amd64 build-essential nfs-common \
         needrestart apt-listbugs \
+        linux-headers-amd64 build-essential firmware-iwlwifi nfs-common \
+        bluetooth blueman \
         vim git curl rsync 7zip htop tree \
         task-desktop task-"$my_de"-desktop \
         libreoffice-style-sifr ttf-mscorefonts-installer \
@@ -180,11 +165,6 @@ install_desktop() {
 
     "$scriptpath"/deploy_systools.sh
     add_themes_tweaks
-
-    for home_folder in /home/*; do
-        my_user="$(basename "$home_folder")"
-        (grep -q "^$my_user:" /etc/passwd) && set_config "$my_desktop" "$my_user"
-    done
 }
 
 
@@ -219,7 +199,36 @@ my_desktop=($(whiptail --separate-output --radiolist "Desktop Environment" \
     $((${#desktop_list[@]}+8)) 40 ${#desktop_list[@]} \
         ${desktop_checklist[@]} 3>&1 1>&2 2>&3))
 
-install_desktop "$my_desktop"
+# Set user's config
+sudo_users=()
+config_users=()
+for home_folder in /home/*; do
+    my_user="$(basename "$home_folder")"
+    if (grep -q "^$my_user:" /etc/passwd); then
+        if ! (groups "$my_user" | grep -q sudo); then
+            go_sudo="Add user '$my_user' to 'sudo' group ?"
+            if (whiptail --yesno "$go_sudo" 8 78); then
+                sudo_users+=("$my_user")
+            fi
+        fi
+
+        apply_profile="Apply default $my_de config to $user's profile ?"
+        if (whiptail --yesno "$apply_profile" 8 78); then
+            config_users+=("$my_user")
+        fi
+    fi
+done
+
+# Here we go !
+install_desktop_environment "$my_desktop"
+
+for sudo_user in ${sudo_users[@]}; do
+    adduser "$sudo_user" sudo
+done
+
+for config_user in ${config_users[@]}; do
+    apply_config "$my_desktop" "$config_user"
+done
 
 if (whiptail --yesno "Reboot and enjoy ?" 8 78); then
     reboot
