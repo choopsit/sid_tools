@@ -123,7 +123,7 @@ if [[ ${#my_shell} -lt 7 ]]; then
     sept="\t\t\t    "
     #sept="\t\t\t\t"
 elif [[ ${#my_shell} -gt 14 ]];then
-    sept="\t    "
+    sept="\t"
     #sept="\t\t"
 fi
 my_terminal="$sept${CYN}Terminal$DEF: $term"
@@ -144,14 +144,14 @@ if { [[ $XDG_CURRENT_DESKTOP ]] || [[ $DESKTOP_SESSION ]] ; }; then
     else
         de="$DESKTOP_SESSION"
     fi
-    my_desktop="\t    ${CYN}DE$DEF: $de"
-    #my_desktop="\t\t${CYN}DE$DEF: $de"
+    #my_desktop="\t    ${CYN}DE$DEF: $de"
+    my_desktop="\t\t${CYN}DE$DEF: $de"
 fi
 
 my_ram="$(free -m | awk '/^Mem:/ {print $3 "/" $2 "MB"}')"
 my_swap="$(free -m | awk '/^Swap:/ {print $3 "/" $2 "MB"}')"
-my_memory="${CYN}RAM$DEF: $my_ram\t    ${CYN}Swap$DEF: $my_swap"
-#my_memory="${CYN}RAM$DEF: $my_ram\t\t${CYN}Swap$DEF: $my_swap"
+#my_memory="${CYN}RAM$DEF: $my_ram\t    ${CYN}Swap$DEF: $my_swap"
+my_memory="${CYN}RAM$DEF: $my_ram\t\t${CYN}Swap$DEF: $my_swap"
 
 my_uptime="${CYN}Uptime$DEF: $(uptime -p | sed 's/up //')"
 
