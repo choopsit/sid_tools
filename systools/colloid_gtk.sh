@@ -91,7 +91,8 @@ hello_gtk() {
             "$install_script" -c dark --tweaks gruvbox --tweaks nord --tweaks normal
             #"$install_script" -c dark --tweaks all
         else
-            sudo "$install_script" -c dark --tweaks gruvbox --tweaks nord --tweaks normal
+            sudo "$install_script" -c dark --tweaks gruvbox --tweaks nord
+            #sudo "$install_script" -c dark --tweaks gruvbox --tweaks nord --tweaks normal
             #sudo "$install_script" -c dark --tweaks all
         fi
     fi
