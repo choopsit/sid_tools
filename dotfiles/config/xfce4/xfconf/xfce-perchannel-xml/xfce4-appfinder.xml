@@ -38,14 +38,16 @@
       <property name="save" type="bool" value="false"/>
     </property>
   </property>
-  <property name="close-on-focus-lost" type="bool" value="false"/>
+  <property name="close-on-focus-lost" type="bool" value="true"/>
   <property name="icon-view" type="bool" value="true"/>
   <property name="item-icon-size" type="uint" value="4"/>
   <property name="hide-category-pane" type="bool" value="false"/>
-  <property name="category-icon-size" type="uint" value="2"/>
+  <property name="category-icon-size" type="uint" value="3"/>
   <property name="last" type="empty">
-    <property name="window-height" type="int" value="802"/>
-    <property name="window-width" type="int" value="1845"/>
-    <property name="pane-position" type="int" value="180"/>
+    <property name="window-height" type="int" value="1054"/>
+    <property name="window-width" type="int" value="1920"/>
+    <property name="pane-position" type="int" value="257"/>
   </property>
+  <property name="always-center" type="bool" value="true"/>
+  <property name="hide-window-decorations" type="bool" value="true"/>
 </channel>

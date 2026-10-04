@@ -5,6 +5,7 @@
     <property name="power-button-action" type="empty"/>
     <property name="show-tray-icon" type="bool" value="false"/>
     <property name="lock-screen-suspend-hibernate" type="bool" value="false"/>
+    <property name="inactivity-on-ac" type="uint" value="0"/>
     <property name="dpms-enabled" type="bool" value="false"/>
   </property>
 </channel>
