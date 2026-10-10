@@ -118,6 +118,7 @@ specific_packages(){
     echo -e "\n${CYN}Desktop environment adaptation (adding/replacing apps)$DEF:"
     if [[ $my_de == "xfce" ]]; then
         apt install -y \
+            bluetooth blueman \
             slick-greeter gvfs-backends redshift-gtk xfce4-docklike-plugin \
             arc-theme papirus-icon-theme breeze-cursor-theme \
             terminator galculator clapper soundconverter sound-juicer \
@@ -150,7 +151,6 @@ install_desktop_environment() {
     apt install -y \
         needrestart apt-listbugs \
         linux-headers-amd64 build-essential firmware-iwlwifi nfs-common \
-        bluetooth blueman \
         vim git curl rsync 7zip htop tree \
         task-desktop task-"$my_de"-desktop \
         libreoffice-style-sifr ttf-mscorefonts-installer \
