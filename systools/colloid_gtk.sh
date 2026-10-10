@@ -88,7 +88,8 @@ hello_gtk() {
         fi
 
         if [[ $(whoami) == root ]]; then
-            "$install_script" -c dark --tweaks gruvbox --tweaks nord --tweaks normal
+            "$install_script" -c dark --tweaks gruvbox --tweaks nord
+            #"$install_script" -c dark --tweaks gruvbox --tweaks nord --tweaks normal
             #"$install_script" -c dark --tweaks all
         else
             sudo "$install_script" -c dark --tweaks gruvbox --tweaks nord

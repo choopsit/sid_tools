@@ -1,7 +1,7 @@
 call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
-"Plug 'arcticicestudio/nord-vim'
-"Plug 'nanotech/jellybeans.vim'
+Plug 'arcticicestudio/nord-vim'
+Plug 'nanotech/jellybeans.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'jiangmiao/auto-pairs'
@@ -72,9 +72,9 @@ map <C-h> :sp<CR>
 map <C-s> :vsp<CR>
 
 " ----- Plugs settings -----
-set background=dark
-silent! colorscheme gruvbox
-"colorscheme nord
+"set background=dark
+"silent! colorscheme gruvbox
+colorscheme nord
 "colorscheme jellybeans
 hi Normal ctermbg=none
 let g:airline#extensions#tabline#enabled = 1

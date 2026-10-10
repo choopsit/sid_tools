@@ -101,7 +101,8 @@ redshift_config() {
 
 tweak_papirus() {
     wget -qO- https://git.io/papirus-folders-install | sh
-    papirus-folders -t Papirus-Dark -C yaru
+    papirus-folders -t Papirus-Dark -C nord
+    #papirus-folders -t Papirus-Dark -C yaru
 }
 
 add_themes_tweaks() {
