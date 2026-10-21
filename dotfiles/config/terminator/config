@@ -7,20 +7,24 @@
 [keybindings]
 [profiles]
   [[default]]
-    background_color = "#171c24"
+    background_color = "#1f2831"
     background_darkness = 0.9
     background_type = transparent
     cursor_fg_color = "#36333f"
-    cursor_bg_color = "#dadcde"
+    cursor_bg_color = "#c1d1e6"
+    cursor_color_default = False
     font = Noto Mono 11
-    foreground_color = "#dadcde"
+    foreground_color = "#cbd0d6"
     show_titlebar = False
     scrollbar_position = hidden
     scrollback_infinite = True
-    palette = "#4b4952:#c15285:#7ea979:#c5c380:#709ab2:#ceaed1:#7fb4b4:#bbbfc3:#656074:#eb338b:#6fb376:#baac66:#738d9c:#af80ad:#399d8c:#96989a"
+    palette = "#4b4952:#a94664:#7ea979:#c5c380:#709ab2:#ceaed1:#7fb4b4:#bbbfc3:#656074:#eb338b:#6fb376:#baac66:#738d9c:#af80ad:#399d8c:#96989a"
     login_shell = True
+    use_theme_colors = True
     bold_is_bright = True
     title_hide_sizetext = True
+    title_transmit_bg_color = "#b1445e"
+    title_receive_bg_color = "#7997be"
   [[nord]]
     background_color = "#2E3440"
     background_darkness = 0.9

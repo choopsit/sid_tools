@@ -8,4 +8,4 @@ keyComboActive=true
 onlyDisplayVisible=true
 showPreviews=true
 middleButtonBehavior=1
-pinned=thunar;firefox;io.github.quodlibet.QuodLibet;terminator;steam;
+pinned=thunar;com.brave.Browser;steam;terminator;

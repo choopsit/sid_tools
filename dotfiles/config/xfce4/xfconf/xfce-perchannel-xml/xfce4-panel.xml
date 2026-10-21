@@ -12,7 +12,7 @@
       <property name="position" type="string" value="p=6;x=0;y=0"/>
       <property name="length" type="double" value="23.958333333333332"/>
       <property name="position-locked" type="bool" value="true"/>
-      <property name="icon-size" type="uint" value="16"/>
+      <property name="icon-size" type="uint" value="0"/>
       <property name="size" type="uint" value="26"/>
       <property name="plugin-ids" type="array">
         <value type="int" value="1"/>
@@ -141,7 +141,7 @@
     </property>
     <property name="plugin-11" type="string" value="pulseaudio">
       <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
-      <property name="known-players" type="string" value="com.github.rafostar.Clapper;firefox;io.github.quodlibet.QuodLibet"/>
+      <property name="known-players" type="string" value="Brave;com.github.rafostar.Clapper;firefox;io.github.quodlibet.QuodLibet"/>
       <property name="volume-step" type="int" value="3"/>
     </property>
     <property name="plugin-12" type="string" value="power-manager-plugin"/>
@@ -209,15 +209,15 @@
       <property name="menu-opacity" type="int" value="85"/>
       <property name="recent" type="array">
         <value type="string" value="redshift-gtk.desktop"/>
-        <value type="string" value="synaptic.desktop"/>
-        <value type="string" value="lightdm-settings.desktop"/>
-        <value type="string" value="org.gnome.TwentyFortyEight.desktop"/>
-        <value type="string" value="xfce4-terminal.desktop"/>
+        <value type="string" value="xfburn.desktop"/>
+        <value type="string" value="firefox.desktop"/>
         <value type="string" value="steam.desktop"/>
-        <value type="string" value="thunar-bulk-rename.desktop"/>
-        <value type="string" value="system-config-printer.desktop"/>
-        <value type="string" value="soundconverter.desktop"/>
-        <value type="string" value="io.github.quodlibet.QuodLibet.desktop"/>
+        <value type="string" value="brave-browser.desktop"/>
+        <value type="string" value="xfce4-taskmanager.desktop"/>
+        <value type="string" value="htop.desktop"/>
+        <value type="string" value="lightdm-settings.desktop"/>
+        <value type="string" value="synaptic.desktop"/>
+        <value type="string" value="dolphin-emu.desktop"/>
       </property>
       <property name="hover-switch-category" type="bool" value="true"/>
     </property>

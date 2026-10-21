@@ -60,6 +60,14 @@ apply_config() {
 
     echo -e "${CYN}$user's profile configuration$DEF:"
 
+    cp -f "$scriptpath/dotfiles/vimrc_tmp" "/home/$user/.vimrc"
+
+    vimplug_url="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    vimplug_dest="/home/$user/.vim/autoload/plug.vim"
+    su "$user" -c "mkdir -p $(dirname "$vimplug_dest")"
+    su "$user" -c "curl -fLo $vimplug_dest --create-dirs $vimplug_url"
+    su "$user" -c "vim +PlugInstall +qall"
+
     for dotfile in "profile" "bashrc" "vimrc"; do
         rm -f "/home/$user/.$dotfile"
     done
@@ -75,12 +83,6 @@ apply_config() {
     cp -f "$scriptpath/dotfiles/vim/vimrc" "/home/$user/.vim"/
 
     chown -R "$user":"$user" "/home/$user"
-
-    vimplug_url="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-    vimplug_dest="/home/$user/.vim/autoload/plug.vim"
-    su "$user" -c "mkdir -p $(dirname "$vimplug_dest")"
-    su "$user" -c "curl -fLo $vimplug_dest --create-dirs $vimplug_url"
-    su "$user" -c "vim +PlugInstall +qall"
 }
 
 lightdm_config() {
@@ -101,7 +103,7 @@ redshift_config() {
 
 tweak_papirus() {
     wget -qO- https://git.io/papirus-folders-install | sh
-    papirus-folders -t Papirus-Dark -C nord
+    papirus-folders -t Papirus-Dark -C nordic
     #papirus-folders -t Papirus-Dark -C yaru
 }
 
@@ -145,17 +147,27 @@ install_desktop_environment() {
     apt autoclean -y
 
     echo -e "\n${CYN}System upgrade$DEF:"
-    apt update -y
+    apt update
     apt upgrade -y
 
+    echo -e "\n${CYN}Prerequisites install$DEF:"
+    apt install -y curl
+
+    echo -e "\n${CYN}Brave repos$DEF:"
+    curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+    curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources
+    apt update
+
     echo -e "\n${CYN}Desktop environment installation$DEF:"
+    #browser="firefox"
+    browser="brave-browser"
     apt install -y \
         needrestart apt-listbugs \
         linux-headers-amd64 build-essential firmware-iwlwifi nfs-common \
-        vim git curl rsync 7zip htop tree \
+        vim git rsync 7zip htop tree \
         task-desktop task-"$my_de"-desktop \
         libreoffice-style-sifr ttf-mscorefonts-installer \
-        firefox gimp steam-installer virt-viewer
+        $browser gimp steam-installer virt-viewer
 
     specific_packages "$my_de"
 
