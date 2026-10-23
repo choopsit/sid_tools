@@ -21,10 +21,10 @@
       </property>
       <property name="background-style" type="uint" value="1"/>
       <property name="background-rgba" type="array">
-        <value type="double" value="0.21344444444444446"/>
-        <value type="double" value="0.2309166666666666"/>
-        <value type="double" value="0.28333333333333333"/>
-        <value type="double" value="0"/>
+        <value type="double" value="0.16333333333333333"/>
+        <value type="double" value="0.14312355555555556"/>
+        <value type="double" value="0.13175555555555557"/>
+        <value type="double" value="0.62080536912751683"/>
       </property>
     </property>
     <property name="panel-2" type="empty">
@@ -39,14 +39,14 @@
         <value type="int" value="13"/>
         <value type="int" value="5"/>
       </property>
-      <property name="length" type="double" value="52.083333333333336"/>
+      <property name="length" type="double" value="52.1875"/>
       <property name="position-locked" type="bool" value="true"/>
       <property name="background-style" type="uint" value="1"/>
       <property name="background-rgba" type="array">
-        <value type="double" value="0.21344444444444446"/>
-        <value type="double" value="0.2309166666666666"/>
-        <value type="double" value="0.28333333333333333"/>
-        <value type="double" value="0"/>
+        <value type="double" value="0.16333333333333333"/>
+        <value type="double" value="0.14312355555555556"/>
+        <value type="double" value="0.13175555555555557"/>
+        <value type="double" value="0.62080536912751683"/>
       </property>
     </property>
     <property name="panel-3" type="empty">
@@ -63,10 +63,10 @@
       <property name="position-locked" type="bool" value="true"/>
       <property name="background-style" type="uint" value="1"/>
       <property name="background-rgba" type="array">
-        <value type="double" value="0.21344444444444446"/>
-        <value type="double" value="0.2309166666666666"/>
-        <value type="double" value="0.28333333333333333"/>
-        <value type="double" value="0"/>
+        <value type="double" value="0.16333333333333333"/>
+        <value type="double" value="0.14312355555555556"/>
+        <value type="double" value="0.13175555555555557"/>
+        <value type="double" value="0.62080536912751683"/>
       </property>
     </property>
     <property name="panel-4" type="empty">
@@ -209,15 +209,13 @@
       <property name="menu-opacity" type="int" value="85"/>
       <property name="recent" type="array">
         <value type="string" value="redshift-gtk.desktop"/>
+        <value type="string" value="lightdm-settings.desktop"/>
         <value type="string" value="xfburn.desktop"/>
-        <value type="string" value="firefox.desktop"/>
         <value type="string" value="steam.desktop"/>
         <value type="string" value="brave-browser.desktop"/>
         <value type="string" value="xfce4-taskmanager.desktop"/>
         <value type="string" value="htop.desktop"/>
-        <value type="string" value="lightdm-settings.desktop"/>
         <value type="string" value="synaptic.desktop"/>
-        <value type="string" value="dolphin-emu.desktop"/>
       </property>
       <property name="hover-switch-category" type="bool" value="true"/>
     </property>

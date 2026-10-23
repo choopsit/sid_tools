@@ -72,9 +72,9 @@ map <C-h> :sp<CR>
 map <C-s> :vsp<CR>
 
 " ----- Plugs settings -----
-"set background=dark
-"silent! colorscheme gruvbox
-colorscheme nord
+set background=dark
+silent! colorscheme gruvbox
+"colorscheme nord
 "colorscheme jellybeans
 hi Normal ctermbg=none
 let g:airline#extensions#tabline#enabled = 1
