@@ -111,7 +111,7 @@ add_themes_tweaks() {
     if [[ $my_de == "xfce" ]]; then
         tweak_papirus
         /usr/local/bin/colloid_gtk
-        #/usr/local/bin/gruvbox_icons
+        /usr/local/bin/gruvbox_icons
     fi
 }
 
