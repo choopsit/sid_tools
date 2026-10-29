@@ -5,10 +5,6 @@ description="Install desktop environment on debian sid"
 
 set -e
 
-DEF="\e[0m"
-RED="\e[31m"
-CYN="\e[36m"
-
 scriptpath="$(dirname "$(realpath "$0")")"
 
 
@@ -46,11 +42,13 @@ specific_config() {
     local user="$2"
 
     if [[ $my_de == "xfce" ]]; then
-        my_confs=("xfce4" "Thunar" "terminator" "autostart" "dconf" "gtk-3.0")
+        my_confs=("xfce4" "Thunar" "terminator" "Mousepad" "autostart" "dconf" "gtk-3.0")
         for my_conf in ${my_confs[@]}; do
             mkdir -p "/home/$user/.config/$my_conf"
             cp -rf "$scriptpath/dotfiles/config/$my_conf"/* "/home/$user/.config/$my_conf"/
         done
+
+        cp -f "$scriptpath/dotfiles/config/redshif.conf" "/home/$user/.config"/
     fi
 }
 
@@ -58,8 +56,7 @@ apply_config() {
     local my_de="$1"
     local user="$2"
 
-    echo -e "${CYN}$user's profile configuration$DEF:"
-
+    # Spawn temporary minimal .vimrc and install vim-plugs
     cp -f "$scriptpath/dotfiles/vimrc_tmp" "/home/$user/.vimrc"
 
     vimplug_url="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
@@ -68,10 +65,12 @@ apply_config() {
     su "$user" -c "curl -fLo $vimplug_dest --create-dirs $vimplug_url"
     su "$user" -c "vim +PlugInstall +qall"
 
+    # Clean previous conf elements
     for dotfile in "profile" "bashrc" "vimrc"; do
         rm -f "/home/$user/.$dotfile"
     done
 
+    # Deploy conf
     cp -f "$scriptpath/dotfiles/profile" "/home/$user/.profile"
 
     mkdir -p "/home/$user/.config/bash"
@@ -82,6 +81,7 @@ apply_config() {
     mkdir -p "/home/$user/.vim"
     cp -f "$scriptpath/dotfiles/vim/vimrc" "/home/$user/.vim"/
 
+    # Fix permissions
     chown -R "$user":"$user" "/home/$user"
 }
 
@@ -118,7 +118,7 @@ add_themes_tweaks() {
 specific_packages(){
     local my_de="$1"
 
-    echo -e "\n${CYN}Desktop environment adaptation (adding/replacing apps)$DEF:"
+    # Desktop environment adaptation (adding/replacing apps)
     if [[ $my_de == "xfce" ]]; then
         apt install -y \
             bluetooth blueman \
@@ -138,7 +138,7 @@ specific_packages(){
 install_desktop_environment() {
     local my_de="$1"
 
-    echo -e "\n${CYN}Sources cleanup$DEF:"
+    # Sources cleanup
     rm -f /etc/apt/sources.list
     cp -f "$scriptpath/conf/apt/debian.sources" /etc/apt/sources.list.d/
     dpkg --add-architecture i386
@@ -146,19 +146,19 @@ install_desktop_environment() {
     apt clean -y
     apt autoclean -y
 
-    echo -e "\n${CYN}System upgrade$DEF:"
+    # System upgrade
     apt update
     apt upgrade -y
 
-    echo -e "\n${CYN}Prerequisites install$DEF:"
+    # Prerequisites install
     apt install -y curl
 
-    echo -e "\n${CYN}Brave repos$DEF:"
+    # Setting Brave repos
     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
     curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources
     apt update
 
-    echo -e "\n${CYN}Desktop environment installation$DEF:"
+    # Desktop environment installation
     #browser="firefox"
     browser="brave-browser"
     apt install -y \
@@ -173,29 +173,30 @@ install_desktop_environment() {
 
     (dpkg -l | grep -q "firefox-esr") && apt purge -y firefox-esr
 
-    echo -e "${CYN}System cleanup$DEF:"
+    # System cleanup
     apt autoremove --purge -y
 
+    # deploy scripts and add themes
     "$scriptpath"/deploy_systools.sh
     add_themes_tweaks
 }
 
 
-[[ $2 ]] && echo -e "${RED}ERR$DEF: Too many arguments" && usage 1
+[[ $2 ]] && echo "ERR: Too many arguments" && usage 1
 
 if [[ $1 =~ ^-(h|-help)$ ]]; then
     usage 0
 elif [[ $1 ]]; then
-    echo -e "${RED}ERR$DEF: Bad argument" && usage 1
+    echo "ERR: Bad argument" && usage 1
 fi
 
 if [[ $(whoami) != root ]]; then
-    echo -e "${RED}ERR$DEF: Need higher privileges"
+    echo "ERR: Need higher privileges"
     exit 1
 fi
 
 if ! (grep -q "sid" /etc/os-release); then
-    echo -e "${RED}ERR$DEF: $(basename "$0") works only on Debian Sid"
+    echo "ERR: $(basename "$0") works only on Debian Sid"
     exit 1
 fi
 
