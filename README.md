@@ -7,7 +7,7 @@ Script installing my destop conf for any PC/VM I use based on debian sid
 - Default terminal-emulator: Terminator
 - Default video-player: Clapper
 
-# Deploy\_systools.sh
+# deploy\_systools.sh
 
 Script deploying some cli-tools
 
