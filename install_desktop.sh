@@ -48,6 +48,9 @@ specific_config() {
             cp -rf "$scriptpath/dotfiles/config/$my_conf"/* "/home/$user/.config/$my_conf"/
         done
 
+        mkdir -p "/home/$user/.local/share/xfce4"
+        cp -rf "$scriptpath/dotfiles/local/share/xfce4"/* "/home/$user/.local/share/xfce4"/
+
         cp -f "$scriptpath/dotfiles/config/redshif.conf" "/home/$user/.config"/
     fi
 }
